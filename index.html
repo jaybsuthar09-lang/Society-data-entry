@@ -1,36 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Society Member Entry</title>
+    <title>Society Data Entry</title>
 </head>
 <body>
 
-<h2>Society Member Data Entry</h2>
+<h2>House-wise Member Entry</h2>
+
+<label>House / Flat No:</label><br>
+<input type="text" id="house" required><br><br>
 
 <form id="memberForm">
-    <label>House / Flat No:</label><br>
-    <input type="text" id="house" required><br><br>
+    <div id="members">
+        <div class="member">
+            <label>Name:</label>
+            <input type="text" class="name" required>
 
-    <label>Member Name:</label><br>
-    <input type="text" id="name" required><br><br>
+            <label>Age:</label>
+            <input type="number" class="age" required>
 
-    <label>Age:</label><br>
-    <input type="number" id="age" required><br><br>
+            <label>Gender:</label>
+            <select class="gender">
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+            </select>
 
-    <label>Gender:</label><br>
-    <select id="gender">
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
-    </select><br><br>
+            <label>Relation:</label>
+            <input type="text" class="relation">
 
-    <label>Relation:</label><br>
-    <input type="text" id="relation"><br><br>
+            <label>Mobile:</label>
+            <input type="text" class="mobile">
+            <hr>
+        </div>
+    </div>
 
-    <label>Mobile:</label><br>
-    <input type="text" id="mobile"><br><br>
-
-    <button type="submit">Add Member</button>
+    <button type="button" onclick="addMember()">Add Another Member</button><br><br>
+    <button type="submit">Save All Members</button>
 </form>
 
 <hr>
@@ -46,59 +52,88 @@
             <th>Gender</th>
             <th>Relation</th>
             <th>Mobile</th>
-            <th>Delete</th>
         </tr>
     </thead>
     <tbody id="tableBody"></tbody>
 </table>
 
 <script>
-    let members = JSON.parse(localStorage.getItem("members")) || [];
+let data = JSON.parse(localStorage.getItem("societyData")) || [];
 
-    function showData() {
-        let table = document.getElementById("tableBody");
-        table.innerHTML = "";
+function addMember() {
+    const div = document.createElement("div");
+    div.className = "member";
+    div.innerHTML = `
+        <label>Name:</label>
+        <input type="text" class="name" required>
 
-        members.forEach((m, i) => {
-            table.innerHTML += `
-                <tr>
-                    <td>${m.house}</td>
-                    <td>${m.name}</td>
-                    <td>${m.age}</td>
-                    <td>${m.gender}</td>
-                    <td>${m.relation}</td>
-                    <td>${m.mobile}</td>
-                    <td><button onclick="deleteMember(${i})">X</button></td>
-                </tr>
-            `;
-        });
+        <label>Age:</label>
+        <input type="number" class="age" required>
 
-        localStorage.setItem("members", JSON.stringify(members));
+        <label>Gender:</label>
+        <select class="gender">
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+        </select>
+
+        <label>Relation:</label>
+        <input type="text" class="relation">
+
+        <label>Mobile:</label>
+        <input type="text" class="mobile">
+        <hr>
+    `;
+    document.getElementById("members").appendChild(div);
+}
+
+document.getElementById("memberForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const house = document.getElementById("house").value;
+    if (!house) {
+        alert("Enter house number");
+        return;
     }
 
-    document.getElementById("memberForm").addEventListener("submit", function(e) {
-        e.preventDefault();
+    const members = document.querySelectorAll(".member");
 
-        let member = {
-            house: house.value,
-            name: name.value,
-            age: age.value,
-            gender: gender.value,
-            relation: relation.value,
-            mobile: mobile.value
-        };
-
-        members.push(member);
-        showData();
-        this.reset();
+    members.forEach(m => {
+        data.push({
+            house: house,
+            name: m.querySelector(".name").value,
+            age: m.querySelector(".age").value,
+            gender: m.querySelector(".gender").value,
+            relation: m.querySelector(".relation").value,
+            mobile: m.querySelector(".mobile").value
+        });
     });
 
-    function deleteMember(index) {
-        members.splice(index, 1);
-        showData();
-    }
-
+    localStorage.setItem("societyData", JSON.stringify(data));
     showData();
+    this.reset();
+    document.getElementById("members").innerHTML = document.querySelector(".member").outerHTML;
+});
+
+function showData() {
+    const table = document.getElementById("tableBody");
+    table.innerHTML = "";
+
+    data.forEach(d => {
+        table.innerHTML += `
+            <tr>
+                <td>${d.house}</td>
+                <td>${d.name}</td>
+                <td>${d.age}</td>
+                <td>${d.gender}</td>
+                <td>${d.relation}</td>
+                <td>${d.mobile}</td>
+            </tr>
+        `;
+    });
+}
+
+showData();
 </script>
 
 </body>

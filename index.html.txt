@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Society Member Entry</title>
+</head>
+<body>
+
+<h2>Society Member Data Entry</h2>
+
+<form id="memberForm">
+    <label>House / Flat No:</label><br>
+    <input type="text" id="house" required><br><br>
+
+    <label>Member Name:</label><br>
+    <input type="text" id="name" required><br><br>
+
+    <label>Age:</label><br>
+    <input type="number" id="age" required><br><br>
+
+    <label>Gender:</label><br>
+    <select id="gender">
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+    </select><br><br>
+
+    <label>Relation:</label><br>
+    <input type="text" id="relation"><br><br>
+
+    <label>Mobile:</label><br>
+    <input type="text" id="mobile"><br><br>
+
+    <button type="submit">Add Member</button>
+</form>
+
+<hr>
+
+<h3>Saved Members</h3>
+
+<table border="1" cellpadding="5">
+    <thead>
+        <tr>
+            <th>House</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Relation</th>
+            <th>Mobile</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+</table>
+
+<script>
+    let members = JSON.parse(localStorage.getItem("members")) || [];
+
+    function showData() {
+        let table = document.getElementById("tableBody");
+        table.innerHTML = "";
+
+        members.forEach((m, i) => {
+            table.innerHTML += `
+                <tr>
+                    <td>${m.house}</td>
+                    <td>${m.name}</td>
+                    <td>${m.age}</td>
+                    <td>${m.gender}</td>
+                    <td>${m.relation}</td>
+                    <td>${m.mobile}</td>
+                    <td><button onclick="deleteMember(${i})">X</button></td>
+                </tr>
+            `;
+        });
+
+        localStorage.setItem("members", JSON.stringify(members));
+    }
+
+    document.getElementById("memberForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        let member = {
+            house: house.value,
+            name: name.value,
+            age: age.value,
+            gender: gender.value,
+            relation: relation.value,
+            mobile: mobile.value
+        };
+
+        members.push(member);
+        showData();
+        this.reset();
+    });
+
+    function deleteMember(index) {
+        members.splice(index, 1);
+        showData();
+    }
+
+    showData();
+</script>
+
+</body>
+</html>

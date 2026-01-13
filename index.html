@@ -2,6 +2,15 @@
 <html>
 <head>
     <title>Society Data Entry</title>
+
+    <!-- Hide delete column while printing -->
+    <style>
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -52,17 +61,16 @@
             <th>Age</th>
             <th>Gender</th>
             <th>Mobile</th>
-            <th>Delete</th>
+            <!-- ❌ No Delete heading -->
         </tr>
     </thead>
     <tbody id="tableBody"></tbody>
 </table>
 
 <script>
-/* ===== Load saved data ===== */
 let data = JSON.parse(localStorage.getItem("societyData")) || [];
 
-/* ===== Add member input row ===== */
+/* Add member row */
 function addMember() {
     const div = document.createElement("div");
     div.className = "member";
@@ -89,7 +97,7 @@ function addMember() {
     document.getElementById("members").appendChild(div);
 }
 
-/* ===== Remove input row before saving ===== */
+/* Remove row before saving */
 function removeMemberRow(btn) {
     const rows = document.querySelectorAll(".member");
     if (rows.length > 1) {
@@ -99,7 +107,7 @@ function removeMemberRow(btn) {
     }
 }
 
-/* ===== Save members ===== */
+/* Save members */
 document.getElementById("memberForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
@@ -126,7 +134,7 @@ document.getElementById("memberForm").addEventListener("submit", function(e) {
     document.getElementById("members").innerHTML = document.querySelector(".member").outerHTML;
 });
 
-/* ===== Show saved data with delete button ===== */
+/* Show stored data */
 function showData() {
     const table = document.getElementById("tableBody");
     table.innerHTML = "";
@@ -139,7 +147,7 @@ function showData() {
                 <td>${d.age}</td>
                 <td>${d.gender}</td>
                 <td>${d.mobile}</td>
-                <td>
+                <td class="no-print">
                     <button onclick="deleteStoredMember(${index})">Delete</button>
                 </td>
             </tr>
@@ -147,42 +155,37 @@ function showData() {
     });
 }
 
-/* ===== Delete from stored data ===== */
+/* Delete stored member */
 function deleteStoredMember(index) {
-    if (confirm("Are you sure you want to delete this member?")) {
+    if (confirm("Delete this member?")) {
         data.splice(index, 1);
         localStorage.setItem("societyData", JSON.stringify(data));
         showData();
     }
 }
 
-/* ===== Print report ===== */
+/* Print report */
 function printReport() {
-    let content = document.getElementById("reportTable").outerHTML;
-    let win = window.open("", "", "width=800,height=600");
-    win.document.write("<h2>Society Member Report</h2>");
-    win.document.write(content);
-    win.document.close();
-    win.print();
+    window.print();
 }
 
-/* ===== Mobile validation (10 digits only) ===== */
+/* Mobile validation */
 document.addEventListener("input", function(e) {
     if (e.target.classList.contains("mobile")) {
         e.target.value = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
     }
 });
 
-/* ===== Name validation (letters & spaces only) ===== */
+/* Name validation */
 document.addEventListener("input", function(e) {
     if (e.target.classList.contains("name")) {
         e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, "");
     }
 });
 
-/* Initial load */
 showData();
 </script>
 
 </body>
 </html>
+

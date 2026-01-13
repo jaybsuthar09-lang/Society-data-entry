@@ -32,7 +32,7 @@
             <label>Mobile:</label>
             <input type="text" class="mobile" maxlength="10" required>
 
-            <button type="button" onclick="removeMember(this)">Remove</button>
+            <button type="button" onclick="removeMemberRow(this)">Remove</button>
             <hr>
         </div>
     </div>
@@ -56,6 +56,7 @@
             <th>Gender</th>
             <th>Relation</th>
             <th>Mobile</th>
+            <th>Delete</th>
         </tr>
     </thead>
     <tbody id="tableBody"></tbody>
@@ -65,7 +66,7 @@
 /* ===== Load saved data ===== */
 let data = JSON.parse(localStorage.getItem("societyData")) || [];
 
-/* ===== Add new member row ===== */
+/* ===== Add member input row ===== */
 function addMember() {
     const div = document.createElement("div");
     div.className = "member";
@@ -89,23 +90,23 @@ function addMember() {
         <label>Mobile:</label>
         <input type="text" class="mobile" maxlength="10" required>
 
-        <button type="button" onclick="removeMember(this)">Remove</button>
+        <button type="button" onclick="removeMemberRow(this)">Remove</button>
         <hr>
     `;
     document.getElementById("members").appendChild(div);
 }
 
-/* ===== Remove member row ===== */
-function removeMember(btn) {
-    const members = document.querySelectorAll(".member");
-    if (members.length > 1) {
+/* ===== Remove input row before saving ===== */
+function removeMemberRow(btn) {
+    const rows = document.querySelectorAll(".member");
+    if (rows.length > 1) {
         btn.parentElement.remove();
     } else {
         alert("At least one member is required.");
     }
 }
 
-/* ===== Save all members ===== */
+/* ===== Save members ===== */
 document.getElementById("memberForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
@@ -129,17 +130,16 @@ document.getElementById("memberForm").addEventListener("submit", function(e) {
     localStorage.setItem("societyData", JSON.stringify(data));
     showData();
 
-    // Reset form
     this.reset();
     document.getElementById("members").innerHTML = document.querySelector(".member").outerHTML;
 });
 
-/* ===== Show saved data ===== */
+/* ===== Show saved data with delete button ===== */
 function showData() {
     const table = document.getElementById("tableBody");
     table.innerHTML = "";
 
-    data.forEach(d => {
+    data.forEach((d, index) => {
         table.innerHTML += `
             <tr>
                 <td>${d.house}</td>
@@ -148,9 +148,21 @@ function showData() {
                 <td>${d.gender}</td>
                 <td>${d.relation}</td>
                 <td>${d.mobile}</td>
+                <td>
+                    <button onclick="deleteStoredMember(${index})">Delete</button>
+                </td>
             </tr>
         `;
     });
+}
+
+/* ===== Delete from stored data ===== */
+function deleteStoredMember(index) {
+    if (confirm("Are you sure you want to delete this member?")) {
+        data.splice(index, 1);
+        localStorage.setItem("societyData", JSON.stringify(data));
+        showData();
+    }
 }
 
 /* ===== Print report ===== */
@@ -169,6 +181,7 @@ document.addEventListener("input", function(e) {
         e.target.value = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
     }
 });
+
 /* ===== Name validation (letters & spaces only) ===== */
 document.addEventListener("input", function(e) {
     if (e.target.classList.contains("name")) {

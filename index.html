@@ -26,9 +26,6 @@
                 <option>Other</option>
             </select>
 
-            <label>Relation:</label>
-            <input type="text" class="relation">
-
             <label>Mobile:</label>
             <input type="text" class="mobile" maxlength="10" required>
 
@@ -54,7 +51,6 @@
             <th>Name</th>
             <th>Age</th>
             <th>Gender</th>
-            <th>Relation</th>
             <th>Mobile</th>
             <th>Delete</th>
         </tr>
@@ -83,9 +79,6 @@ function addMember() {
             <option>Female</option>
             <option>Other</option>
         </select>
-
-        <label>Relation:</label>
-        <input type="text" class="relation">
 
         <label>Mobile:</label>
         <input type="text" class="mobile" maxlength="10" required>
@@ -122,7 +115,6 @@ document.getElementById("memberForm").addEventListener("submit", function(e) {
             name: m.querySelector(".name").value,
             age: m.querySelector(".age").value,
             gender: m.querySelector(".gender").value,
-            relation: m.querySelector(".relation").value,
             mobile: m.querySelector(".mobile").value
         });
     });
@@ -146,7 +138,6 @@ function showData() {
                 <td>${d.name}</td>
                 <td>${d.age}</td>
                 <td>${d.gender}</td>
-                <td>${d.relation}</td>
                 <td>${d.mobile}</td>
                 <td>
                     <button onclick="deleteStoredMember(${index})">Delete</button>

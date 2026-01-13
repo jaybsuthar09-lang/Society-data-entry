@@ -29,8 +29,8 @@
             <label>Relation:</label>
             <input type="text" class="relation">
 
-           <label>Mobile:</label>
-           <input type="text" class="mobile" maxlength="10" pattern="[0-9]{10}" required>
+            <label>Mobile:</label>
+            <input type="text" class="mobile" maxlength="10" required>
             <hr>
         </div>
     </div>
@@ -58,8 +58,10 @@
 </table>
 
 <script>
+/* ===== Load saved data ===== */
 let data = JSON.parse(localStorage.getItem("societyData")) || [];
 
+/* ===== Add new member block ===== */
 function addMember() {
     const div = document.createElement("div");
     div.className = "member";
@@ -81,16 +83,17 @@ function addMember() {
         <input type="text" class="relation">
 
         <label>Mobile:</label>
-        <input type="text" class="mobile">
+        <input type="text" class="mobile" maxlength="10" required>
         <hr>
     `;
     document.getElementById("members").appendChild(div);
 }
 
+/* ===== Save all members of one house ===== */
 document.getElementById("memberForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
-    const house = document.getElementById("house").value;
+    const house = document.getElementById("house").value.trim();
     if (!house) {
         alert("Enter house number");
         return;
@@ -111,10 +114,35 @@ document.getElementById("memberForm").addEventListener("submit", function(e) {
 
     localStorage.setItem("societyData", JSON.stringify(data));
     showData();
+
+    // Reset form but keep one member block
     this.reset();
-    document.getElementById("members").innerHTML = document.querySelector(".member").outerHTML;
+    document.getElementById("members").innerHTML = `
+        <div class="member">
+            <label>Name:</label>
+            <input type="text" class="name" required>
+
+            <label>Age:</label>
+            <input type="number" class="age" required>
+
+            <label>Gender:</label>
+            <select class="gender">
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+            </select>
+
+            <label>Relation:</label>
+            <input type="text" class="relation">
+
+            <label>Mobile:</label>
+            <input type="text" class="mobile" maxlength="10" required>
+            <hr>
+        </div>
+    `;
 });
 
+/* ===== Display saved data ===== */
 function showData() {
     const table = document.getElementById("tableBody");
     table.innerHTML = "";
@@ -133,9 +161,16 @@ function showData() {
     });
 }
 
+/* ===== Mobile number validation (MAX 10 digits, numbers only) ===== */
+document.addEventListener("input", function(e) {
+    if (e.target.classList.contains("mobile")) {
+        e.target.value = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
+    }
+});
+
+/* Initial load */
 showData();
 </script>
 
 </body>
 </html>
-
